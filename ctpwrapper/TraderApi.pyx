@@ -60,10 +60,10 @@ cdef class TraderApiWrapper:
 
     def Init(self):
         if self._api is not NULL:
-            self._spi = new CTraderSpi(<PyObject *> self)
-
+            # Use ``self`` as SPI wrapper if SPI wrapper is not set
+            if self._spi is NULL:
+                self.RegisterSpi(self)
             if self._spi is not NULL:
-                self._api.RegisterSpi(self._spi)
                 self._api.Init()
             else:
                 raise MemoryError()
@@ -75,6 +75,18 @@ cdef class TraderApiWrapper:
             with nogil:
                 result = self._api.Join()
             return result
+
+    def RegisterSpi(self, spi):
+        # If register with new SPI, delete existing one
+        if self._spi is not NULL:
+            del self._spi
+            self._spi = NULL
+        if spi is None:
+            self._spi = NULL
+        else:
+            # Create a new SPI wrapper
+            self._spi = new CTraderSpi(<PyObject *> spi)
+        self._api.RegisterSpi(self._spi)
 
     def GetTradingDay(self):
 
