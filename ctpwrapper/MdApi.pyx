@@ -72,7 +72,7 @@ cdef class MdApiWrapper:
 
     @staticmethod
     def GetApiVersion():
-        return CMdApi.GetApiVersion()
+        return CMdApi.GetApiVersion().decode()
 
     def Init(self):
 

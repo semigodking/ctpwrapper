@@ -48,7 +48,7 @@ cdef class TraderApiWrapper:
 
     @staticmethod
     def GetApiVersion():
-        return CTraderApi.GetApiVersion()
+        return CTraderApi.GetApiVersion().decode()
 
     def Release(self):
 
